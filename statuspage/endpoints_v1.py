@@ -19,6 +19,9 @@ mapping_table = {
         'path': '/pages/{{page}}/components/{{component}}.json',
         'valid_params': ['component[status]']
     },
+    'get_component_subscribers': {
+        'path': '/pages/{{page}}/components/{{component}}/subscribers.json'
+    },
 
     # Incidents
     'get_incidents': {
@@ -39,4 +42,13 @@ mapping_table = {
         'path': '/pages/{{page}}/incidents/{{incident}}.json',
         'valid_params': ['incident[name]','incident[status]','incident[message]','incident[wants_twitter_update]','incident[impact_override]','incident[component_ids][]']
     },
+    'get_incident_subscribers': {
+        'path': '/pages/{{page}}/incidents/{{incident}}/subscribers.json'
+    },
+
+    # Subscribers
+    'get_subscribers': {
+        'path': '/pages/{{page}}/subscribers.json'
+    },
+
 }
