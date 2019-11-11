@@ -32,13 +32,14 @@ class StatusPageError(Exception):
 
 
 def clean_kwargs(kwargs):
+    new_kwargs = []
     for key, value in kwargs.iteritems():
         if hasattr(value, '__iter__'):
-            kwargs[key] = ','.join(map(str, value))
-    underscore_keys = [key for key in kwargs if key.find('_')>=0]
-    for key in underscore_keys:
-        val = kwargs.pop(key)
-        kwargs[key.replace('_','-')] = val
+            for v in value:
+                new_kwargs.append((key, v))
+        else:
+            new_kwargs.append((key, value))
+    return new_kwargs
 
 
 class StatusPage(object):
@@ -65,11 +66,15 @@ class StatusPage(object):
                     lambda m: "%s" % urllib.quote(str(kwargs.pop(m.group(1),''))),
                     STATUSPAGE_BASE_URL + path
             )
-            clean_kwargs(kwargs)
+            kwargs = clean_kwargs(kwargs)
             for kw in kwargs:
                 if kw not in valid_params:
-                    raise TypeError("%s() got an unexpected keyword argument "
-                            "'%s'" % (api_call, kw))
+                    for valid_param in valid_params:
+                        if isinstance(valid_param,re._pattern_type) and valid_param.search(kw) is not None:
+                            break
+                    else:
+                        raise TypeError("%s() got an unexpected keyword argument "
+                                "'%s'" % (api_call, kw))
             url += '?' + urllib.urlencode(kwargs)
             return self._make_request(method, url, body, status)
         return call.__get__(self)
